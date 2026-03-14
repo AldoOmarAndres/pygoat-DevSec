@@ -22,11 +22,37 @@ jobs:
     - name: Run Bandit Scan
       run: bandit -ll -ii -r . -f json -o bandit-report.json
 
-    - name: Generate report
+    - name: Generate sast report
       uses: actions/upload-artifact@v7.0.0
       if: always()
       with:
         name: sast-report 
         path: bandit-report.json
 
-    
+  image_scan:
+    name: Image Scan con Scout
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v6.0.2
+
+    - name: Setup docker
+      uses: docker/setup-docker-action@v5.0.0
+
+    - name: Build image
+      run: docker build -f Dockerfile -t myapp:latest .
+
+    - name: Docker Scout
+      uses: docker/scout-action@v1.20.2
+      with:
+        command: quickview,cves
+        only-severities: critical,high
+        sarif-file: scout-report.sarif
+
+    - name: Generate image report
+      uses: actions/upload-artifact@v7.0.0
+      if: always()
+      with:
+        name: image-report
+        path: scout-report.sarif
