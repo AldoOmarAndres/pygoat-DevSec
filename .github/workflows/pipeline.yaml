@@ -1,0 +1,23 @@
+name: DevSecOps
+
+on: [push]
+
+jobs:
+  static_scan:
+    name: SAST con Bandit
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: ctions/checkout@v6.0.2
+
+    - name: Setup Python
+      uses: actions/setup-python@v6.2.0
+      with:
+        python-version: 3.11
+
+    - name: Install Bandit
+      run: pip install bandit
+
+    - name: Run Bandit Scan
+      run: bandit -ll -ii -r .
