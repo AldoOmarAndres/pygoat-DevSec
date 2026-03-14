@@ -56,3 +56,4 @@ jobs:
       with:
         name: image-report
         path: scout-report.sarif
+    
